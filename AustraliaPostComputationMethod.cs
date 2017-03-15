@@ -15,6 +15,7 @@ using Grand.Services.Directory;
 using Grand.Services.Localization;
 using Grand.Services.Shipping;
 using Grand.Services.Shipping.Tracking;
+using Grand.Core.Domain.Orders;
 
 namespace Grand.Plugin.Shipping.AustraliaPost
 {
@@ -165,7 +166,7 @@ namespace Grand.Plugin.Shipping.AustraliaPost
                         if (jToken != null)
                         {
                             var error = (JValue)jToken;
-                            throw new NopException(error.Value.ToString());
+                            throw new GrandException(error.Value.ToString());
                         }
                         throw new Exception("Response is not valid.");
                     }
@@ -302,7 +303,7 @@ namespace Grand.Plugin.Shipping.AustraliaPost
                     response.ShippingOptions.Add(shippingOption);
                 }
             }
-            catch (NopException ex)
+            catch (GrandException ex)
             {
                 response.AddError(ex.Message);
                 return response;
@@ -379,6 +380,16 @@ namespace Grand.Plugin.Shipping.AustraliaPost
             this.DeletePluginLocaleResource("Plugins.Shipping.AustraliaPost.Fields.AdditionalHandlingCharge.Hint");
 
             base.Uninstall();
+        }
+
+        public bool HideShipmentMethods(IList<ShoppingCartItem> cart)
+        {
+            return false;
+        }
+
+        public Type GetControllerType()
+        {
+            return typeof(Controllers.ShippingAustraliaPostController);
         }
         #endregion
 
